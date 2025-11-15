@@ -51,7 +51,7 @@ Si aún tenés dudas sin resolver hazmelo saber por medio de preguntas e indican
 
 @workspace 
 Quiero que ahora hagas un análisis de 
-`[tarea de mamyor impacto]`
+`[tarea de mayor impacto]`
 desde distintos puntos de vistas. Indiqués cuáles son las certezas y las dudas. Intentes responder las dudas en base a evidencia. Indiques cuáles son las nuevas certezas. Cuál es el Listado de Tareas Para Hacer.
 Archivos involucrados. Como implementar esas tareas sin romper producción. Aún no proporciones código
 

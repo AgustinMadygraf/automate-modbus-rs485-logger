@@ -106,7 +106,9 @@ class ModbusClient(IModbusGateway):
             except (serial.SerialException, IOError) as e:
                 if attempt < self.max_retries:
                     self.logger.warning(
-                        "Error leyendo registro Modbus (intento %d/%d): %s. Reintentando en %.2fs...",
+                        "Error leyendo registro Modbus"
+                        "(intento %d/%d): %s. "
+                        "Reintentando en %.2fs...",
                         attempt + 1,
                         self.max_retries,
                         e,

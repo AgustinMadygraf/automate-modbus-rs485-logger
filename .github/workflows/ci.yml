@@ -25,4 +25,4 @@ jobs:
       - name: Run flake8
         run: flake8 src tests
       - name: Run tests
-        run: pytest --maxfail=1 --disable-warnings --tb=short
+        run: pytest --cov=src --cov-report=term-missing --maxfail=1 --disable-warnings --tb=short

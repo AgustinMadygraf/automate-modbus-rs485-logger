@@ -70,14 +70,17 @@ def test_modbus_client_read_error(monkeypatch):
 def test_modbus_client_retries(monkeypatch):
     # Simula fallos en los primeros N intentos y éxito después
     attempts = []
+
     class Inst:
         def __init__(self, *a, **k):
             pass
+
         def read_register(self, *a, **k):
             attempts.append(1)
             if len(attempts) < 3:
                 raise IOError("Read error")
             return 42
+
         serial = type("serial", (), {})()
         serial.baudrate = 9600
         serial.parity = 0
@@ -102,12 +105,15 @@ def test_modbus_client_retries(monkeypatch):
 def test_modbus_client_max_retries(monkeypatch):
     # Simula que siempre falla y verifica que se reintenta el número correcto de veces
     attempts = []
+
     class Inst:
         def __init__(self, *a, **k):
             pass
+
         def read_register(self, *a, **k):
             attempts.append(1)
             raise IOError("Read error")
+
         serial = type("serial", (), {})()
         serial.baudrate = 9600
         serial.parity = 0

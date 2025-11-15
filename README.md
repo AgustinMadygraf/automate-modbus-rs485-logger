@@ -25,9 +25,12 @@ black --check src tests
 ```
 
 Corre los tests:
+
 ```bash
-pytest
+pytest --cov=src --cov-report=term-missing
 ```
+
+Esto mostrará un reporte de cobertura de código en la terminal. Puedes ajustar el reporte usando otros formatos de pytest-cov.
 
 
 ---
