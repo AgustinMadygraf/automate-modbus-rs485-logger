@@ -29,7 +29,26 @@ Corre los tests:
 pytest
 ```
 
+
 ---
+
+## Parámetros de reconexión/backoff Modbus
+
+Puedes configurar la resiliencia ante fallos de comunicación Modbus mediante las siguientes variables en tu `.env`:
+
+- `MODBUS_MAX_RETRIES`: Número máximo de reintentos ante error de comunicación (por defecto: 3)
+- `MODBUS_BACKOFF_INITIAL`: Tiempo inicial de espera entre reintentos, en segundos (por defecto: 1)
+- `MODBUS_BACKOFF_FACTOR`: Factor de backoff exponencial (por defecto: 2)
+
+Ejemplo:
+
+```env
+MODBUS_MAX_RETRIES=3
+MODBUS_BACKOFF_INITIAL=1
+MODBUS_BACKOFF_FACTOR=2
+```
+
+Cada vez que falle la lectura de un registro Modbus, el sistema reintentará hasta el máximo configurado, esperando un tiempo creciente entre cada intento.
 
 ![CI](https://github.com/<USER>/<REPO>/actions/workflows/ci.yml/badge.svg)
 

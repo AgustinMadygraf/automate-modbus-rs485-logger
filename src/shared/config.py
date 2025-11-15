@@ -70,6 +70,36 @@ def get_config():
         modbus_timeout = 0.5
     config["MODBUS_TIMEOUT"] = modbus_timeout
 
+    # MODBUS_MAX_RETRIES (opcional)
+    try:
+        modbus_max_retries = int(os.getenv("MODBUS_MAX_RETRIES", "3"))
+        if modbus_max_retries < 0:
+            raise ValueError
+    except (ValueError, TypeError):
+        logger.warning("MODBUS_MAX_RETRIES inválido, usando 3.")
+        modbus_max_retries = 3
+    config["MODBUS_MAX_RETRIES"] = modbus_max_retries
+
+    # MODBUS_BACKOFF_INITIAL (opcional)
+    try:
+        modbus_backoff_initial = float(os.getenv("MODBUS_BACKOFF_INITIAL", "1"))
+        if modbus_backoff_initial < 0:
+            raise ValueError
+    except (ValueError, TypeError):
+        logger.warning("MODBUS_BACKOFF_INITIAL inválido, usando 1.")
+        modbus_backoff_initial = 1
+    config["MODBUS_BACKOFF_INITIAL"] = modbus_backoff_initial
+
+    # MODBUS_BACKOFF_FACTOR (opcional)
+    try:
+        modbus_backoff_factor = float(os.getenv("MODBUS_BACKOFF_FACTOR", "2"))
+        if modbus_backoff_factor <= 0:
+            raise ValueError
+    except (ValueError, TypeError):
+        logger.warning("MODBUS_BACKOFF_FACTOR inválido, usando 2.")
+        modbus_backoff_factor = 2
+    config["MODBUS_BACKOFF_FACTOR"] = modbus_backoff_factor
+
     logger.debug(
         "Config cargada | LOG_LEVEL=%s | LOG_MESSAGE_MAX_LENGTH=%s | MODBUS_PORT=%s | "
         "MODBUS_SLAVE_ID=%s | MODBUS_BAUDRATE=%s | MODBUS_PARITY=%s | MODBUS_STOPBITS=%s | "

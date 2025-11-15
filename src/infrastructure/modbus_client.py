@@ -7,6 +7,7 @@ import serial
 import time
 
 from src.shared.logger_cli_v0 import get_logger
+from src.shared.config import get_config
 
 
 from src.adapter_interface.controllers.modbus_controller import ModbusController
@@ -63,10 +64,16 @@ class ModbusClient(IModbusGateway):
             self.logger.error("Error inicializando Modbus: %s", e)
             raise ModbusClientException("Error inicializando Modbus: %s" % e) from e
 
+        # Cargar parámetros de reconexión/backoff
+        config = get_config()
+        self.max_retries = config.get("MODBUS_MAX_RETRIES", 3)
+        self.backoff_initial = config.get("MODBUS_BACKOFF_INITIAL", 1)
+        self.backoff_factor = config.get("MODBUS_BACKOFF_FACTOR", 2)
+
     def read_register(
         self, registeraddress, number_of_decimals=1, functioncode=3, signed=False
     ):
-        "Lee un registro Modbus y devuelve su valor."
+        "Lee un registro Modbus y devuelve su valor, con lógica de reconexión/backoff."
         self.logger.debug(
             "Intentando leer registro: address=%s, "
             "number_of_decimals=%s, functioncode=%s, signed=%s",
@@ -75,32 +82,53 @@ class ModbusClient(IModbusGateway):
             functioncode,
             signed,
         )
-        try:
-            value = self.instrument.read_register(
-                registeraddress=registeraddress,
-                number_of_decimals=number_of_decimals,
-                functioncode=functioncode,
-                signed=signed,
-            )
-            self.logger.info(
-                "Lectura exitosa del registro %s: %s",
-                registeraddress,
-                value,
-            )
-            self.logger.debug("Valor leído (debug): %s", value)
-            if value is None:
-                self.logger.warning(
-                    "El valor leído del registro %s es None", registeraddress
+        attempt = 0
+        wait_time = self.backoff_initial
+        while attempt <= self.max_retries:
+            try:
+                value = self.instrument.read_register(
+                    registeraddress=registeraddress,
+                    number_of_decimals=number_of_decimals,
+                    functioncode=functioncode,
+                    signed=signed,
                 )
-            return value
-        except (serial.SerialException, IOError) as e:
-            self.logger.error("Error leyendo registro Modbus: %s", e)
-            raise ModbusClientException("Error leyendo registro Modbus: %s" % e) from e
-        except Exception as ex:
-            self.logger.critical(
-                "Excepción crítica leyendo registro %s: %s", registeraddress, ex
-            )
-            raise
+                self.logger.info(
+                    "Lectura exitosa del registro %s: %s",
+                    registeraddress,
+                    value,
+                )
+                self.logger.debug("Valor leído (debug): %s", value)
+                if value is None:
+                    self.logger.warning(
+                        "El valor leído del registro %s es None", registeraddress
+                    )
+                return value
+            except (serial.SerialException, IOError) as e:
+                if attempt < self.max_retries:
+                    self.logger.warning(
+                        "Error leyendo registro Modbus (intento %d/%d): %s. Reintentando en %.2fs...",
+                        attempt + 1,
+                        self.max_retries,
+                        e,
+                        wait_time,
+                    )
+                    time.sleep(wait_time)
+                    wait_time *= self.backoff_factor
+                    attempt += 1
+                else:
+                    self.logger.error(
+                        "Error leyendo registro Modbus tras %d intentos: %s",
+                        self.max_retries + 1,
+                        e,
+                    )
+                    raise ModbusClientException(
+                        f"Error leyendo registro Modbus tras {self.max_retries + 1} intentos: {e}"
+                    ) from e
+            except Exception as ex:
+                self.logger.critical(
+                    "Excepción crítica leyendo registro %s: %s", registeraddress, ex
+                )
+                raise
 
 
 PORT = "COM3"
@@ -108,6 +136,7 @@ SLAVE_ID = 1
 
 
 def main():
+    "Ejemplo de uso del cliente Modbus para leer registros periódicamente."
     try:
         client = ModbusClient(PORT, SLAVE_ID)
         controller = ModbusController(client)
