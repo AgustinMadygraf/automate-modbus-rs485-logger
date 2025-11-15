@@ -51,11 +51,11 @@ def get_logger(name: str = "modbus-logger") -> logging.Logger:
     fmt = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
     datefmt = "%H:%M:%S"
     custom_level_styles = {
-        'info':    {'color': 'green', 'bold': True},
-        'debug':   {'color': 'blue'},
-        'warning': {'color': 'yellow', 'bold': True},
-        'error':   {'color': 'red', 'bold': True},
-        'critical':{'color': 'magenta', 'bold': True},
+        'info':    {'color': 'green', 'bold': True},      # Verde
+        'debug':   {'color': 'cyan', 'bold': True},       # Celeste
+        'warning': {'color': 'yellow', 'bold': True},     # Amarillo
+        'error':   {'color': 'red', 'bold': True},        # Rojo
+        'critical':{'color': 'red', 'background': 'black', 'bold': True}, # Rojo/Negro
     }
     custom_field_styles = {
         'asctime': {'color': 'cyan'},
