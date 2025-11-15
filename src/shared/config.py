@@ -71,7 +71,9 @@ def get_config():
     config["MODBUS_TIMEOUT"] = modbus_timeout
 
     logger.debug(
-        "Config cargada | LOG_LEVEL=%s | LOG_MESSAGE_MAX_LENGTH=%s | MODBUS_PORT=%s | MODBUS_SLAVE_ID=%s | MODBUS_BAUDRATE=%s | MODBUS_PARITY=%s | MODBUS_STOPBITS=%s | MODBUS_TIMEOUT=%s",
+        "Config cargada | LOG_LEVEL=%s | LOG_MESSAGE_MAX_LENGTH=%s | MODBUS_PORT=%s | "
+        "MODBUS_SLAVE_ID=%s | MODBUS_BAUDRATE=%s | MODBUS_PARITY=%s | MODBUS_STOPBITS=%s | "
+        "MODBUS_TIMEOUT=%s",
         config["LOG_LEVEL"],
         config["LOG_MESSAGE_MAX_LENGTH"],
         config["MODBUS_PORT"],

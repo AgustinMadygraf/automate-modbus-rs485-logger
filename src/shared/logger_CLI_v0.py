@@ -7,9 +7,9 @@ import coloredlogs
 from src.shared.config import get_config
 
 
-
 class TruncatingColoredFormatter(coloredlogs.ColoredFormatter):
-    "Formateador de logs con colores y truncado de mensajes largos. Inspirado en Rasa CLI, pero con un estilo visual propio."
+    "Formateador de logs con colores y truncado de mensajes largos."
+
     def __init__(self, *args, max_length: int = None, **kwargs):
         self.max_length = max_length
         super().__init__(*args, **kwargs)
@@ -28,7 +28,6 @@ class TruncatingColoredFormatter(coloredlogs.ColoredFormatter):
             return super().format(record)
         finally:
             record.msg, record.args = original_msg, original_args
-
 
 
 def get_logger(name: str = "modbus-logger") -> logging.Logger:
@@ -51,16 +50,16 @@ def get_logger(name: str = "modbus-logger") -> logging.Logger:
     fmt = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
     datefmt = "%H:%M:%S"
     custom_level_styles = {
-        'info':    {'color': 'green', 'bold': True},      # Verde
-        'debug':   {'color': 'cyan', 'bold': True},       # Celeste
-        'warning': {'color': 'yellow', 'bold': True},     # Amarillo
-        'error':   {'color': 'red', 'bold': True},        # Rojo
-        'critical':{'color': 'red', 'background': 'black', 'bold': True}, # Rojo/Negro
+        "info": {"color": "green", "bold": True},  # Verde
+        "debug": {"color": "cyan", "bold": True},  # Celeste
+        "warning": {"color": "yellow", "bold": True},  # Amarillo
+        "error": {"color": "red", "bold": True},  # Rojo
+        "critical": {"color": "red", "background": "black", "bold": True},  # Rojo/Negro
     }
     custom_field_styles = {
-        'asctime': {'color': 'cyan'},
-        'levelname': {'color': 'white', 'bold': True},
-        'name': {'color': 'blue'},
+        "asctime": {"color": "cyan"},
+        "levelname": {"color": "white", "bold": True},
+        "name": {"color": "blue"},
     }
     if not logger.handlers:
         coloredlogs.install(
